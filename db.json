@@ -4,13 +4,16 @@
   "ip":"192.168.199.11",
   "port":"3306",
   "user":"sxadmin",
-  "password":"Sxxm@123"
+  "password":"Sxxm@123",
+  "state":0
+
 },
 "target":
 { "db":"drink",
   "ip":"192.168.199.11",
   "port":"3306",
   "user":"sxadmin",
-  "password":"Sxxm@123"
+  "password":"Sxxm@123",
+  "state":0
 }
 }
