@@ -29,7 +29,7 @@ type DbConfig struct {
 	} `json:"target"`
 }
 
-func (DbConfig) initcon() (*sql.DB,*sql.DB){
+func (DbConfig) initcon() (*sql.DB, *sql.DB) {
 
 	jsonFile, err := os.Open("db.json")
 
@@ -55,7 +55,7 @@ func (DbConfig) initcon() (*sql.DB,*sql.DB){
 	//验证连接
 	if err := DBs.Ping(); err != nil {
 		fmt.Println("open DBs database fail")
-   		return nil,nil
+		return nil, nil
 	}
 	fmt.Println("connnect Dbs success")
 
@@ -68,9 +68,9 @@ func (DbConfig) initcon() (*sql.DB,*sql.DB){
 	//验证连接
 	if err := DBt.Ping(); err != nil {
 		fmt.Println("open Dbt database fail")
-		return nil,nil
+		return nil, nil
 	}
 	fmt.Println("connnect DBt success")
-	
-	return DBs,DBt
+
+	return DBs, DBt
 }
