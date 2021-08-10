@@ -11,21 +11,29 @@ import (
 func main() {
 
 	fmt.Println("Hello.Go..")
+
+	task := inittask()
+	for _, ta := range task {
+		fmt.Println(ta)
+		fmt.Println("\n")
+	}
+
+	//	fmt.Println(task)
+
 	var dbc DbConfig
 	var DBS, DBT *sql.DB
+	DBS, DBT = dbc.initcon()
 	//	var instr strings.Builder
 	var instr bytes.Buffer
 
-	var zkuo, ykuo, dhao, fhao, dyhao []byte
-	zkuo = []byte("(")
-	ykuo = []byte(")")
-	dhao = []byte(",")
-	fhao = []byte(";")
-	dyhao = []byte("'")
+	zkuo := []byte("(")
+	ykuo := []byte(")")
+	dhao := []byte(",")
+	fhao := []byte(";")
+	dyhao := []byte("'")
 
+	fmt.Println(zkuo)
 	instr.WriteString("insert into tsw_meterread values")
-
-	DBS, DBT = dbc.initcon()
 
 	rows, e := DBS.Query("select t1.id,t3.name AreaName,t1.kh ClientNo,t1.hm ClientName,t2.watermeter_no MeterSeal,t2.address MeterAddress,t5.watert_name FeeKind,now() CreateDate from ys_cust_userbase t1 join ys_cust_watermeter t2 on t1.id = t2.cust_userbase_id join ys_cb_area t3 on t1.area_no = t3.area_no join ys_cust_yspz t4 on t1.id = t4.cust_userbase_id join ys_price_watertype t5 on t4.fyhlx = t5.watert_no limit 11")
 	if e == nil {
