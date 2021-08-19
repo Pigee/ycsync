@@ -6,16 +6,23 @@ import (
 	"github.com/pkg/errors"
 	//	"strings"
 	"bytes"
-	"reflect"
 )
 
-func main() {
+func getdata(tsk Task,db *sql.DB){
+
+}
+
+
+func insertdata(s string,db *sql.DB) {
+}
+
+
+func exec() {
 
 	fmt.Println("Hello.Go..")
 
 	task := inittask()
 	for _, ta := range task {
-		fmt.Println(reflect.TypeOf(ta))
 		fmt.Println(ta)
 		fmt.Println("\n")
 	}
