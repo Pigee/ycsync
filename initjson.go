@@ -33,6 +33,7 @@ type Taskele struct {
 type DbConfig struct {
 	Source struct {
 		Db       string `json:"db"`
+		Type     string `json:"type"`
 		IP       string `json:"ip"`
 		Port     string `json:"port"`
 		User     string `json:"user"`
@@ -41,6 +42,7 @@ type DbConfig struct {
 	} `json:"source"`
 	Target struct {
 		Db       string `json:"db"`
+		Type     string `json:"type"`
 		IP       string `json:"ip"`
 		Port     string `json:"port"`
 		User     string `json:"user"`

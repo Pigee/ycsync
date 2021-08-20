@@ -1,6 +1,7 @@
 {
 "source":
 { "db":"yc_run",
+  "type":"mysql",
   "ip":"localhost",
   "port":"3306",
   "user":"sxadmin",
@@ -10,6 +11,7 @@
 },
 "target":
 { "db":"drink",
+  "type":"mysql",
   "ip":"localhost",
   "port":"3306",
   "user":"sxadmin",
