@@ -8,31 +8,10 @@ import (
 	"bytes"
 )
 
-func getdata(tsk Task,db *sql.DB){
+func getdata(tsk Taskele, DBS *sql.DB, DBT *sql.DB) {
 
-}
+	DBT.Exec(tsk.Psql) //truncate target table
 
-
-func insertdata(s string,db *sql.DB) {
-}
-
-
-func exec() {
-
-	fmt.Println("Hello.Go..")
-
-	task := inittask()
-	for _, ta := range task {
-		fmt.Println(ta)
-		fmt.Println("\n")
-	}
-
-	//	fmt.Println(task)
-
-	var dbc DbConfig
-	var DBS, DBT *sql.DB
-	DBS, DBT = dbc.initcon()
-	//	var instr strings.Builder
 	var instr bytes.Buffer
 
 	zkuo := []byte("(")
@@ -41,10 +20,10 @@ func exec() {
 	fhao := []byte(";")
 	dyhao := []byte("'")
 
-	fmt.Println(zkuo)
-	instr.WriteString("insert into tsw_meterread values")
+	// 	fmt.Println(zkuo)
+	instr.WriteString(tsk.Isql)
 
-	rows, e := DBS.Query("select t1.id,t3.name AreaName,t1.kh ClientNo,t1.hm ClientName,t2.watermeter_no MeterSeal,t2.address MeterAddress,t5.watert_name FeeKind,now() CreateDate from ys_cust_userbase t1 join ys_cust_watermeter t2 on t1.id = t2.cust_userbase_id join ys_cb_area t3 on t1.area_no = t3.area_no join ys_cust_yspz t4 on t1.id = t4.cust_userbase_id join ys_price_watertype t5 on t4.fyhlx = t5.watert_no limit 33")
+	rows, e := DBS.Query(tsk.Ssql)
 	if e == nil {
 		errors.New("query incur error")
 	}
@@ -82,14 +61,15 @@ func exec() {
 			instr.Write(ykuo)
 			instr.Write(dhao)
 
-			if linec == 10  { // row for each
+			if linec == tsk.Irow { // row for each
 				// 	instr = strings.Join([]string{instr[0 : len(instr)-1], ";"}, "")
 				instr.Truncate(instr.Len() - 1)
 				instr.Write(fhao)
-				fmt.Println(instr.String())
+//				fmt.Println(instr.String())
+				DBT.Exec(instr.String())
 				//					fmt.Println(instr[20])
 				instr.Reset()
-				instr.WriteString("insert into tsw_meterread values")
+				instr.WriteString(tsk.Isql)
 				linec = 0
 			}
 
@@ -102,14 +82,36 @@ func exec() {
 	if linec > 0 {
 		instr.Truncate(instr.Len() - 1)
 		instr.Write(fhao)
-		fmt.Println(instr.String())
+//		fmt.Println(instr.String())
+		DBT.Exec(instr.String())
 	}
-	
 
 	//	instr = strings.Join([]string{instr[0 : len(instr)-1], ";"}, "")
 	fmt.Println(linec)
 	fmt.Printf("\n")
+	fmt.Println("Refreshing table",tsk.Name," successfully...")
+
+}
+
+func exec() {
+
+	fmt.Println("Hello.Go..")
+
+	var dbc DbConfig
+	var DBS, DBT *sql.DB
+	DBS, DBT = dbc.initcon()
+
+	task := inittask()
+	for _, ta := range task {
+		//		fmt.Println(ta)
+		//		fmt.Println("\n")
+
+		getdata(ta, DBS, DBT)
+	}
+
+	//	fmt.Println(task)
 
 	DBS.Close()
 	DBT.Close()
+	//	var instr strings.Builder
 }

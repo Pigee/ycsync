@@ -14,6 +14,17 @@ type Task []struct {
 	Name      string `json:"name"`
 	Ssql      string `json:"ssql"`
 	Isql      string `json:"isql"`
+	Psql      string `json:"psql"`
+	Irow      int    `json:"irow"`
+	Startdate string `json:"startdate"`
+	Interval  int    `json:"interval"`
+}
+
+type Taskele struct {
+	Name      string `json:"name"`
+	Ssql      string `json:"ssql"`
+	Isql      string `json:"isql"`
+	Psql      string `json:"psql"`
 	Irow      int    `json:"irow"`
 	Startdate string `json:"startdate"`
 	Interval  int    `json:"interval"`
