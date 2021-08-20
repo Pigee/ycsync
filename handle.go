@@ -67,6 +67,7 @@ func getdata(tsk Taskele, DBS *sql.DB, DBT *sql.DB) {
 				instr.Write(fhao)
 //				fmt.Println(instr.String())
 				DBT.Exec(instr.String())
+	                        fmt.Println("insert into table",tsk.Name,linec," rows successfully...")
 				//					fmt.Println(instr[20])
 				instr.Reset()
 				instr.WriteString(tsk.Isql)
@@ -84,11 +85,10 @@ func getdata(tsk Taskele, DBS *sql.DB, DBT *sql.DB) {
 		instr.Write(fhao)
 //		fmt.Println(instr.String())
 		DBT.Exec(instr.String())
+	        fmt.Println("insert into table",tsk.Name,linec," rows successfully...")
 	}
 
 	//	instr = strings.Join([]string{instr[0 : len(instr)-1], ";"}, "")
-	fmt.Println(linec)
-	fmt.Printf("\n")
 	fmt.Println("Refreshing table",tsk.Name," successfully...")
 
 }
