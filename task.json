@@ -1,9 +1,18 @@
 [
     {
         "name": "tsw_meterread", 
-        "ssql": "select t1.id,t3.name AreaName,t1.kh ClientNo,t1.hm ClientName,t2.watermeter_no MeterSeal,t2.address MeterAddress,t5.watert_name FeeKind,now() CreateDate from ys_cust_userbase t1 join ys_cust_watermeter t2 on t1.id = t2.cust_userbase_id join ys_cb_area t3 on t1.area_no = t3.area_no join ys_cust_yspz t4 on t1.id = t4.cust_userbase_id join ys_price_watertype t5 on t4.fyhlx = t5.watert_no",
+        "ssql": "select t1.id,t3.name AreaName,t1.kh ClientNo,t1.hm ClientName,t2.watermeter_no MeterSeal,t2.address MeterAddress,t5.watert_name FeeKind,now() CreateDate from ys_cust_userbase t1 join ys_cust_watermeter t2 on t1.id = t2.cust_userbase_id join ys_cb_area t3 on t1.area_no = t3.area_no join ys_cust_yspz t4 on t1.id = t4.cust_userbase_id join ys_price_watertype t5 on t4.fyhlx = t5.watert_no limit 30",
         "isql": "insert into tsw_meterread values", 
         "psql": "truncate table  tsw_meterread", 
+        "irow": 3000, 
+        "startdate": "2021-06-01 02:00:00", 
+        "interval": 5
+    },
+    {
+        "name": "tsw_yslsftj", 
+        "ssql": "select t1.id,t1.name AreaName,left(now(),7) YearMonth,t2.MeterCount,t3.Qty,t3.ShouldAmount,t4.YiShouAmount,t3.ShouldAmount-t4.YiShouAmount WeiShouAmount, round(t4.YiShouAmount/t3.ShouldAmount*100,2) HSL,t3.YinShouHS,t3.YinShouHS-t4.YiShouHS WeiShouHS,now() CreateDate from ys_cb_area t1 left join (select area_no,count(1) MeterCount from ys_cust_userbase  where status = 0 GROUP BY area_no) t2 on t1.area_no = t2.area_no left join (select area_no,sum(count_qan) Qty,sum(debtl_stotal) ShouldAmount,count(distinct userbase_kh) YinShouHS from ys_debtlist where year = year(now()) and month = month(now()) GROUP BY area_no ) t3 on t1.area_no = t3.area_no left join (select area_no,sum(debtl_stotal) YiShouAmount,count(distinct userbase_kh) YiShouHS from ys_debtlist where year = year(now()) and month = month(now()) and pay_tag = 2 GROUP BY area_no ) t4 on t1.area_no = t4.area_no where t1.parent_id is not null and t1.id not in(56,57)",
+        "isql": "INSERT INTO tsw_yslsftj(id, AreaName, YearMonth, MeterCount, Qty, ShouldAmount, YiShouAmount, WeiShouAmount, HSL, YinShouHS, WeiShouHS, CreateDate) VALUES", 
+        "psql": "truncate table tsw_yslsftj", 
         "irow": 3000, 
         "startdate": "2021-06-01 02:00:00", 
         "interval": 5
