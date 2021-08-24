@@ -4,13 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/pkg/errors"
-	//	"strings"
 	"bytes"
-	//"github.com/robfig/cron"
-	"time"
+	"github.com/robfig/cron"
+	"log"
 )
 
-func getdata(tsk Taskele, DBS *sql.DB, DBT *sql.DB) {
+func getdata(tsk Taskele,DBS *sql.DB,DBT *sql.DB) {
 
 	if len(tsk.Psql) > 5 {
 		DBT.Exec(tsk.Psql) //truncate target table
@@ -71,7 +70,7 @@ func getdata(tsk Taskele, DBS *sql.DB, DBT *sql.DB) {
 				instr.Write(fhao)
 				//				fmt.Println(instr.String())
 				DBT.Exec(instr.String())
-				fmt.Println("insert into table", tsk.Name, linec, " rows successfully...")
+				log.Println("insert into table", tsk.Name, linec, " rows successfully...")
 				//					fmt.Println(instr[20])
 				instr.Reset()
 				instr.WriteString(tsk.Isql)
@@ -89,11 +88,13 @@ func getdata(tsk Taskele, DBS *sql.DB, DBT *sql.DB) {
 		instr.Write(fhao)
 		//		fmt.Println(instr.String())
 		DBT.Exec(instr.String())
-		fmt.Println("insert into table", tsk.Name, linec, " rows successfully...")
+		log.Println("insert into table", tsk.Name, linec, " rows successfully...")
 	}
 
 	//	instr = strings.Join([]string{instr[0 : len(instr)-1], ";"}, "")
-	fmt.Println("Refreshing table", tsk.Name, " successfully...")
+	log.Println("Refreshing table", tsk.Name, " successfully...")
+//	DBS.Close()
+//	DBT.Close()
 
 }
 
@@ -101,31 +102,21 @@ func exec() {
 
 	fmt.Println("Hello.Go..")
 
-	var dbc DbConfig
-	var DBS, DBT *sql.DB
-	DBS, DBT = dbc.initcon()
-// 	c := cron.New()
+	 var dbc DbConfig
+	 var DBS, DBT *sql.DB
+	 DBS, DBT = dbc.initcon()
+	c := cron.New()
 
 	task := inittask()
 
-
 	for _, ta := range task {
-		//		fmt.Println(ta)
-//		c := cron.New()
-		//		fmt.Println("\n")
-//	        c.AddFunc("*/10 * * * * *", func() { getdata(ta, DBS, DBT) })
-		go getdata(ta, DBS, DBT) 
+		ta := ta
+		c.AddFunc(ta.Cronstr, func() { getdata(ta,DBS,DBT) })
 
-//		c.Start()
-//		select {}
-//		continue
+	}
 
-	} 
-
-	time.Sleep(20*time.Second)
-//		c.Start()
-//		select {}
-//	DBS.Close()
-	// DBT.Close()
-	//	var instr strings.Builder
+	c.Start()
+	select {}
+	DBS.Close()
+        DBT.Close()
 }
