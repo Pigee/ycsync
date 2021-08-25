@@ -1,15 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
 	"github.com/pkg/errors"
-	"bytes"
 	"github.com/robfig/cron"
 	"log"
 )
 
-func getdata(tsk Taskele,DBS *sql.DB,DBT *sql.DB) {
+func getdata(tsk Taskele, DBS *sql.DB, DBT *sql.DB) {
 
 	if len(tsk.Psql) > 5 {
 		DBT.Exec(tsk.Psql) //truncate target table
@@ -93,8 +93,8 @@ func getdata(tsk Taskele,DBS *sql.DB,DBT *sql.DB) {
 
 	//	instr = strings.Join([]string{instr[0 : len(instr)-1], ";"}, "")
 	log.Println("Refreshing table", tsk.Name, " successfully...")
-//	DBS.Close()
-//	DBT.Close()
+	//	DBS.Close()
+	//	DBT.Close()
 
 }
 
@@ -102,21 +102,21 @@ func exec() {
 
 	fmt.Println("Hello.Go..")
 
-	 var dbc DbConfig
-	 var DBS, DBT *sql.DB
-	 DBS, DBT = dbc.initcon()
+	var dbc DbConfig
+	var DBS, DBT *sql.DB
+	DBS, DBT = dbc.initcon()
 	c := cron.New()
 
 	task := inittask()
 
 	for _, ta := range task {
 		ta := ta
-		c.AddFunc(ta.Cronstr, func() { getdata(ta,DBS,DBT) })
+		c.AddFunc(ta.Cronstr, func() { getdata(ta, DBS, DBT) })
 
 	}
 
 	c.Start()
 	select {}
 	DBS.Close()
-        DBT.Close()
+	DBT.Close()
 }

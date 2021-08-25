@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/godror/godror"
+	_ "github.com/mattn/go-adodb"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -86,34 +88,48 @@ func (DbConfig) initcon() (*sql.DB, *sql.DB) {
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
+	var DBs, DBt *sql.DB
 	var dbc DbConfig
 	json.Unmarshal([]byte(byteValue), &dbc)
 	fmt.Println(dbc.Source.State)
 
-	paths := strings.Join([]string{dbc.Source.User, ":", dbc.Source.Password, "@tcp(", dbc.Source.IP, ":", dbc.Source.Port, ")/", dbc.Source.Db, "?charset=utf8"}, "")
-	DBs, _ := sql.Open("mysql", paths)
-	DBs.SetConnMaxLifetime(100)
-	//设置上数据库最大闲置连接数
-	DBs.SetMaxIdleConns(10)
-	//验证连接
-	if err := DBs.Ping(); err != nil {
-		fmt.Println("open DBs database fail")
-		return nil, nil
+	switch dbc.Source.Type {
+	case "mysql":
+		DBs = initmysql(dbc.Source.User, dbc.Source.Password, dbc.Source.IP, dbc.Source.Port, dbc.Source.Db)
+	case "oracle":
+		DBs = initmysql(dbc.Source.User, dbc.Source.Password, dbc.Source.IP, dbc.Source.Port, dbc.Source.Db)
+	case "mssql":
+		DBs = initmysql(dbc.Source.User, dbc.Source.Password, dbc.Source.IP, dbc.Source.Port, dbc.Source.Db)
+	default:
+		DBs = initmysql(dbc.Source.User, dbc.Source.Password, dbc.Source.IP, dbc.Source.Port, dbc.Source.Db)
 	}
-	fmt.Println("connnect Dbs success")
 
-	patht := strings.Join([]string{dbc.Target.User, ":", dbc.Target.Password, "@tcp(", dbc.Target.IP, ":", dbc.Target.Port, ")/", dbc.Target.Db, "?charset=utf8"}, "")
-	//打开数据库,前者是驱动名，所以要导入： _ "github.com/go-sql-driver/mysql"
-	DBt, _ := sql.Open("mysql", patht)
-	DBt.SetConnMaxLifetime(100)
-	//设置上数据库最大闲置连接数
-	DBt.SetMaxIdleConns(10)
-	//验证连接
-	if err := DBt.Ping(); err != nil {
-		fmt.Println("open Dbt database fail")
-		return nil, nil
+	switch dbc.Target.Type {
+	case "mysql":
+		DBt = initmysql(dbc.Target.User, dbc.Target.Password, dbc.Target.IP, dbc.Target.Port, dbc.Target.Db)
+	case "oracle":
+		DBt = initmysql(dbc.Target.User, dbc.Target.Password, dbc.Target.IP, dbc.Target.Port, dbc.Target.Db)
+	case "mssql":
+		DBt = initmysql(dbc.Target.User, dbc.Target.Password, dbc.Target.IP, dbc.Target.Port, dbc.Target.Db)
+	default:
+		DBt = initmysql(dbc.Target.User, dbc.Target.Password, dbc.Target.IP, dbc.Target.Port, dbc.Target.Db)
 	}
-	fmt.Println("connnect DBt success")
 
 	return DBs, DBt
+}
+
+func initmysql(user, password, ip, port, db string) *sql.DB {
+
+	paths := strings.Join([]string{user, ":", password, "@tcp(", ip, ":", port, ")/", db, "?charset=utf8"}, "")
+	Mysqldb, _ := sql.Open("mysql", paths)
+	Mysqldb.SetConnMaxLifetime(100)
+	//设置上数据库最大闲置连接数
+	Mysqldb.SetMaxIdleConns(10)
+	//验证连接
+	if err := Mysqldb.Ping(); err != nil {
+		fmt.Println("open ",db," database fail")
+		return nil
+	}
+	fmt.Println("connnect ",db," success")
+	return Mysqldb
 }
