@@ -4,8 +4,8 @@
   "type":"mysql",
   "ip":"localhost",
   "port":"3306",
-  "user":"sxadmin",
-  "password":"Sxxm@123",
+  "user":"admin",
+  "password":"123456",
   "state":0
 
 },
@@ -14,8 +14,8 @@
   "type":"mysql",
   "ip":"localhost",
   "port":"3306",
-  "user":"sxadmin",
-  "password":"Sxxm@123",
+  "user":"admin",
+  "password":"123456",
   "state":0
 }
 }
