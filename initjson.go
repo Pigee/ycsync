@@ -6,10 +6,12 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/godror/godror"
-	_ "github.com/mattn/go-adodb"
+	// _ "github.com/mattn/go-adodb"
+	_ "github.com/denisenkom/go-mssqldb"
 	"io/ioutil"
 	"os"
 	"strings"
+	"log"
 )
 
 type Task []struct {
@@ -97,9 +99,9 @@ func (DbConfig) initcon() (*sql.DB, *sql.DB) {
 	case "mysql":
 		DBs = initmysql(dbc.Source.User, dbc.Source.Password, dbc.Source.IP, dbc.Source.Port, dbc.Source.Db)
 	case "oracle":
-		DBs = initmysql(dbc.Source.User, dbc.Source.Password, dbc.Source.IP, dbc.Source.Port, dbc.Source.Db)
+		DBs = initoracle(dbc.Source.User, dbc.Source.Password, dbc.Source.IP, dbc.Source.Port, dbc.Source.Db)
 	case "mssql":
-		DBs = initmysql(dbc.Source.User, dbc.Source.Password, dbc.Source.IP, dbc.Source.Port, dbc.Source.Db)
+		DBs = initmssql(dbc.Source.User, dbc.Source.Password, dbc.Source.IP, dbc.Source.Port, dbc.Source.Db)
 	default:
 		DBs = initmysql(dbc.Source.User, dbc.Source.Password, dbc.Source.IP, dbc.Source.Port, dbc.Source.Db)
 	}
@@ -108,9 +110,9 @@ func (DbConfig) initcon() (*sql.DB, *sql.DB) {
 	case "mysql":
 		DBt = initmysql(dbc.Target.User, dbc.Target.Password, dbc.Target.IP, dbc.Target.Port, dbc.Target.Db)
 	case "oracle":
-		DBt = initmysql(dbc.Target.User, dbc.Target.Password, dbc.Target.IP, dbc.Target.Port, dbc.Target.Db)
+		DBt = initoracle(dbc.Target.User, dbc.Target.Password, dbc.Target.IP, dbc.Target.Port, dbc.Target.Db)
 	case "mssql":
-		DBt = initmysql(dbc.Target.User, dbc.Target.Password, dbc.Target.IP, dbc.Target.Port, dbc.Target.Db)
+		DBt = initmssql(dbc.Target.User, dbc.Target.Password, dbc.Target.IP, dbc.Target.Port, dbc.Target.Db)
 	default:
 		DBt = initmysql(dbc.Target.User, dbc.Target.Password, dbc.Target.IP, dbc.Target.Port, dbc.Target.Db)
 	}
@@ -120,6 +122,40 @@ func (DbConfig) initcon() (*sql.DB, *sql.DB) {
 
 func initmysql(user, password, ip, port, db string) *sql.DB {
 
+	connString := strings.Join([]string{user, ":", password, "@tcp(", ip, ":", port, ")/", db, "?charset=utf8"}, "")
+	Mysqldb, _ := sql.Open("mysql", connString)
+	Mysqldb.SetConnMaxLifetime(100)
+	//设置上数据库最大闲置连接数
+	Mysqldb.SetMaxIdleConns(10)
+	//验证连接
+	if err := Mysqldb.Ping(); err != nil {
+		fmt.Println("open ",db," database fail")
+		return nil
+	}
+	fmt.Println("connnect ",db," success")
+	return Mysqldb
+}
+
+func initmssql(user, password, ip, port, db string) *sql.DB {
+	connString := fmt.Sprintf("server=%s;port%d;database=%s;user id=%s;password=%s;encrypt=disable", ip, port, db, user, password)
+
+	fmt.Println(connString)
+// 	paths := strings.Join([]string{"sqlserver://",user,":",password,"@",ip,":",port,"?database=",db},"")
+
+	Mssqldb, err := sql.Open("mssql", connString)
+
+	 if err != nil {
+
+        log.Fatal("Open Connection failed:", err.Error())
+
+    }
+	fmt.Println("connnect ",db," success")
+	return Mssqldb
+}
+
+
+func initoracle(user, password, ip, port, db string) *sql.DB {
+	// testing module ....
 	paths := strings.Join([]string{user, ":", password, "@tcp(", ip, ":", port, ")/", db, "?charset=utf8"}, "")
 	Mysqldb, _ := sql.Open("mysql", paths)
 	Mysqldb.SetConnMaxLifetime(100)
@@ -133,3 +169,5 @@ func initmysql(user, password, ip, port, db string) *sql.DB {
 	fmt.Println("connnect ",db," success")
 	return Mysqldb
 }
+
+

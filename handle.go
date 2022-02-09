@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/pkg/errors"
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	"log"
 )
 
@@ -22,15 +22,19 @@ func getdata(tsk Taskele, DBS *sql.DB, DBT *sql.DB) {
 	dhao := []byte(",")
 	fhao := []byte(";")
 	dyhao := []byte("'")
+	bignull := []byte("NULL")
 
 	// 	fmt.Println(zkuo)
 	instr.WriteString(tsk.Isql)
-
+	fmt.Println(tsk.Ssql)
 	rows, e := DBS.Query(tsk.Ssql)
 	if e == nil {
-		errors.New("query incur error")
+		errors.New("Select Data Error @_@")
 	}
+        ////////////////////////
+	
 	//获取列名cols
+	fmt.Println(rows)
 	cols, _ := rows.Columns()
 	//	fmt.Println(rows)
 	linec := 0
@@ -49,13 +53,22 @@ func getdata(tsk Taskele, DBS *sql.DB, DBT *sql.DB) {
 			}
 			rows.Scan(buff...) //扫描到buff接口中，实际是字符串类型data中
 			dataKv := make(map[string]string, len(cols))
+
 			for k, col := range data { //k是index，col是对应的值
-				instr.Write(dyhao)
-				instr.Write(col)
-				//instr.WriteByte(string(col))
-				instr.Write(dyhao)
-				instr.Write(dhao)
-				dataKv[cols[k]] = string(col)
+				if len(col) == 0 {
+					instr.Write(bignull)
+					instr.Write(dhao)
+					dataKv[cols[k]] = string(col)
+				} else {
+					instr.Write(dyhao)
+					instr.Write(col)
+					//instr.WriteByte(string(col))
+					instr.Write(dyhao)
+					instr.Write(dhao)
+					dataKv[cols[k]] = string(col)
+				}
+
+				//                                fmt.Println(instr.String())
 			}
 			ret = append(ret, dataKv)
 

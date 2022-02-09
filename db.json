@@ -1,21 +1,21 @@
 {
-"source":
-{ "db":"yc_run",
-  "type":"mysql",
-  "ip":"localhost",
-  "port":"3306",
-  "user":"sxadmin",
-  "password":"Sxxm@123",
+"target":
+{ "db":"yc",
+  "type":"mssql",
+  "ip":"192.168.199.59",
+  "port":"1433",
+  "user":"sa",
+  "password":"Welcome1",
   "state":0
 
 },
-"target":
+"source":
 { "db":"drink",
   "type":"mysql",
   "ip":"localhost",
   "port":"3306",
   "user":"sxadmin",
-  "password":"Sxxm@123",
+  "password":"xxxxxxx",
   "state":0
 }
 }
